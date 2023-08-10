@@ -1,8 +1,11 @@
 document.addEventListener('DOMContentLoaded', function() {
-    // Faz uma chamada assíncrona para obter os posts
-    fetch('https://jsonplaceholder.typicode.com/posts')
-        .then(response => response.json())
-        .then(posts => {
+    // Cria uma instância do objeto XMLHttpRequest
+    const xhr = new XMLHttpRequest();
+
+    // Define a função de tratamento do evento de carregamento
+    xhr.onload = function() {
+        if (xhr.status === 200) {
+            const posts = JSON.parse(xhr.responseText);
             const postContainer = document.getElementById('post-container');
 
             posts.forEach(post => {
@@ -14,8 +17,19 @@ document.addEventListener('DOMContentLoaded', function() {
                 `;
                 postContainer.appendChild(postElement);
             });
-        })
-        .catch(error => {
-            console.error('Erro ao obter os posts:', error);
-        });
+        } else {
+            console.error('Erro ao obter os posts:', xhr.statusText);
+        }
+    };
+
+    // Define a função de tratamento do evento de erro
+    xhr.onerror = function() {
+        console.error('Erro de conexão');
+    };
+
+    // Configura a solicitação
+    xhr.open('GET', 'https://jsonplaceholder.typicode.com/posts', true);
+
+    // Envia a solicitação
+    xhr.send();
 });
